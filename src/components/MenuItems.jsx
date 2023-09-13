@@ -1,32 +1,105 @@
-import React, {useState} from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Dropdown from "./Dropdown";
+import { Link } from "react-router-dom";
 
-function MenuItems({items, depthLevel}){
- 
-    const [dropdown, setDropdown] = useState(false);
+function MenuItems({ items, depthLevel }) {
+  const [dropdown, setDropdown] = useState(false);
+  let menuRef = useRef();
 
-    return(
-        <li className="menu-items">
-      {items.submenu ? (
+  useEffect(() => {
+    let handler = (event) => {
+      if (
+        dropdown &&
+        menuRef.current &&
+        !menuRef.current.contains(event.target)
+      ) {
+        setDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handler);
+    document.addEventListener("touchstart", handler);
+
+    return () => {
+      document.removeEventListener("mousedown", handler);
+      document.removeEventListener("touchstart", handler);
+    };
+  }, [dropdown]);
+
+  const onMouseEnter = () => {
+    window.innerWidth > 960 && setDropdown(true);
+  };
+
+  const onMouseLeave = () => {
+    window.innerWidth > 960 && setDropdown(false);
+  };
+
+  const closeDropdown = () => {
+    dropdown && setDropdown(false);
+  };
+
+  return (
+    <li
+      className="menu-items"
+      ref={menuRef}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      onClick={closeDropdown}
+    >
+      {items.url && items.submenu ? (
         <>
-          <button type="button" aria-expanded = {dropdown ? "true" : "false"}
-          onClick={() => setDropdown((preValue) => !preValue)} >
-            {items.title}{' '}
-            {depthLevel > 0 ? <span>&raquo;</span> : <span className="arrow" />}
+          <button
+            type="button"
+            aria-haspopup="menu"
+            aria-expanded={dropdown ? 'true' : 'false'}
+            onClick={() => setDropdown((preValue) => !preValue)}
+          >
+            {window.innerWidth < 960 && depthLevel === 0 ? (
+              items.title
+            ) : (
+              <Link to={items.url}>{items.title}</Link>
+            )}
+
+            {depthLevel > 0 &&
+            window.innerWidth < 960 ? null : depthLevel > 0 &&
+              window.innerWidth > 960 ? (
+              <span>&raquo;</span>
+            ) : (
+              <span className="arrow" />
+            )}
           </button>
-          <Dropdown 
-          depthLevel = {depthLevel} 
-          submenus={items.submenu} 
-          dropdown = {dropdown}
-          
+          <Dropdown
+            depthLevel={depthLevel}
+            submenus={items.submenu}
+            dropdown={dropdown}
+          />
+        </>
+      ) : !items.url && items.submenu ? (
+        <>
+          <button
+            type="button"
+            aria-haspopup="menu"
+            aria-expanded={dropdown ? 'true' : 'false'}
+            onClick={() => setDropdown((preValue) => !preValue)}
+          >
+            {items.title}{' '}
+            {depthLevel > 0 ? (
+              <span>&raquo;</span>
+            ) : (
+              <span className="arrow" />
+            )}
+          </button>
+          <Dropdown
+            depthLevel={depthLevel}
+            submenus={items.submenu}
+            dropdown={dropdown}
           />
         </>
       ) : (
-        <a href={items.url}>{items.title}</a>
+        <Link to={items.url}>{items.title}</Link>
       )}
     </li>
-    )
-
+  );
 }
 
 export default MenuItems;

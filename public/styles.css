@@ -11,6 +11,7 @@ body {
 header {
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.07), 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   color: #212529;
+  /* position: fixed; */
 }
 
 .nav-area {
@@ -19,6 +20,7 @@ header {
   max-width: 1200px;
   margin: 0 auto;
   padding: 10px 20px;
+  /* position: fixed; */
 }
 
 .logo {
@@ -59,7 +61,7 @@ header {
 }
 
 button span {
-  margin-left: 3px;
+  margin-left: 2px;
 }
 
 .menu-items > a, .menu-items button {
@@ -69,7 +71,7 @@ button span {
 
 .menu-items a:hover,
 .menu-items button:hover {
-  background-color: #f2f2f2;
+  background-color: #7dc4e8;
 }
 
 .arrow::after {
